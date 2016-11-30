@@ -1,11 +1,12 @@
 require 'set'
 module FakeS3
   class S3MatchSet
-    attr_accessor :matches,:is_truncated,:common_prefixes
+    attr_accessor :matches,:is_truncated,:common_prefixes,:next_marker
     def initialize
       @matches = []
       @is_truncated = false
       @common_prefixes = []
+      @next_marker = nil
     end
   end
 
@@ -86,6 +87,9 @@ module FakeS3
       count = 0
       last_chunk = nil
       @sorted_set.each do |s3_object|
+        if marker and marker == s3_object.name
+          marker_found = true
+        end
         if marker_found && (!prefix or s3_object.name.index(prefix) == 0)
           if delimiter
             name = s3_object.name
@@ -102,7 +106,7 @@ module FakeS3
                   ms.common_prefixes << base_prefix + chunks[0] + delimiter
                   last_chunk = chunks[0]
                 else
-                  is_truncated = true
+                  ms.is_truncated = true
                   break
                 end
               end
@@ -117,14 +121,12 @@ module FakeS3
           if count <= max_keys
             ms.matches << s3_object
           else
-            is_truncated = true
+            ms.is_truncated = true
+            ms.next_marker = s3_object.name
             break
           end
         end
 
-        if marker and marker == s3_object.name
-          marker_found = true
-        end
       end
 
       if pseudo

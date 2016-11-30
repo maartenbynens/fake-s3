@@ -1,6 +1,6 @@
 module FakeS3
   class BucketQuery
-    attr_accessor :prefix,:matches,:marker,:max_keys,
+    attr_accessor :prefix,:matches,:marker,:max_keys,:next_marker,
                   :delimiter,:bucket,:is_truncated,:common_prefixes
 
     # Syntactic sugar

@@ -156,6 +156,7 @@ module FakeS3
         lbr.Marker(bucket_query.marker)
         lbr.MaxKeys(bucket_query.max_keys)
         lbr.IsTruncated(bucket_query.is_truncated?)
+        lbr.NextMarker(bucket_query.next_marker)
         append_objects_to_list_bucket_result(lbr,bucket_query.matches)
         append_common_prefixes_to_list_bucket_result(lbr, bucket_query.common_prefixes)
       }
